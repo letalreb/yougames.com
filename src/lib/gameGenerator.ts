@@ -196,12 +196,16 @@ function generateGameCode(
     '{{PLAYER_SPRITE}}': sprites.player,
     '{{PLAYER_SIZE}}': config.player.size.toString(),
     '{{PLAYER_SPEED}}': config.player.speed.toString(),
+    '{{PLAYER_COLOR}}': config.player.color,
     '{{JUMP_POWER}}': (config.player.jumpPower || 15).toString(),
     '{{GRAVITY}}': (config.world.gravity || 0.8).toString(),
     '{{BACKGROUND_COLOR}}': config.world.backgroundColor,
     '{{PLATFORM_COLOR}}': '#8B4513',
     '{{COLLECTIBLE_SPRITE}}': sprites.collectible,
+    '{{OBSTACLE_SPRITE}}': '🌳', // Default obstacle
     '{{TARGET_SCORE}}': config.goal.target.toString(),
+    '{{SCROLL_SPEED}}': (config.player.speed || 6).toString(),
+    '{{LIVES}}': (category === 'runner' ? 3 : 1).toString(),
     '{{OPERATION}}': category === 'math' ? 'add' : 'add',
     '{{MAX_NUMBER}}': '20',
     '{{QUESTION_COUNT}}': config.goal.target.toString(),
@@ -222,7 +226,7 @@ function generateGameCode(
  * Generate a complete game from a prompt
  */
 export function generateGame(request: GenerateGameRequest): Game {
-  const { prompt, category, difficulty, userId } = request
+  const { prompt, category, difficulty, userId, customImages } = request
 
   // Sanitize prompt
   const sanitizedPrompt = sanitizeText(prompt)
@@ -251,19 +255,20 @@ export function generateGame(request: GenerateGameRequest): Game {
     assets: {
       sprites: {
         player: {
-          type: 'emoji',
+          type: customImages?.find(img => img.role === 'player') ? 'image' : 'emoji',
           value: sprites.player,
           width: config.player.size,
           height: config.player.size,
         },
         collectible: {
-          type: 'emoji',
+          type: customImages?.find(img => img.role === 'collectible') ? 'image' : 'emoji',
           value: sprites.collectible,
           width: 30,
           height: 30,
         },
       },
     },
+    customImages: customImages || undefined,
     createdAt: new Date().toISOString(),
     createdBy: userId || 'guest',
     published: false,

@@ -1,6 +1,7 @@
 import { platformerTemplate } from './platformer'
 import { memoryTemplate } from './memory'
 import { mathQuizTemplate } from './mathQuiz'
+import { runnerTemplate } from './runner'
 import type { GameTemplate, GameCategory } from '@/types/game'
 
 /**
@@ -8,11 +9,11 @@ import type { GameTemplate, GameCategory } from '@/types/game'
  */
 export const gameTemplates: Record<GameCategory, GameTemplate> = {
   platformer: platformerTemplate,
+  runner: runnerTemplate,
   memory: memoryTemplate,
   math: mathQuizTemplate,
   
   // Placeholder templates (to be implemented)
-  runner: platformerTemplate, // Similar to platformer
   maze: platformerTemplate,
   quiz: mathQuizTemplate, // Similar to math
   'card-match': memoryTemplate, // Similar to memory

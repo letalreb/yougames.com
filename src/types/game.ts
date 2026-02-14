@@ -82,10 +82,23 @@ export interface AssetManifest {
 }
 
 export interface SpriteAsset {
-  type: 'emoji' | 'shape' | 'generated';
+  type: 'emoji' | 'shape' | 'generated' | 'image';
   value: string; // emoji char, shape descriptor, or data URL
   width: number;
   height: number;
+}
+
+// ============================================
+// CUSTOM IMAGES (User Uploaded)
+// ============================================
+
+export interface CustomImage {
+  id: string; // unique id for this upload
+  role: 'player' | 'collectible' | 'obstacle' | 'background' | 'platform';
+  dataUrl: string; // base64 data URL
+  width: number;
+  height: number;
+  filename?: string;
 }
 
 export interface SoundAsset {
@@ -122,6 +135,9 @@ export interface Game {
   code: string;
   
   assets: AssetManifest;
+  
+  // Custom uploaded images
+  customImages?: CustomImage[];
   
   // Metadata
   createdAt: string; // ISO date
@@ -161,6 +177,7 @@ export interface GenerateGameRequest {
   category: GameCategory;
   difficulty: Difficulty;
   userId?: string; // optional, null for guest
+  customImages?: CustomImage[]; // optional custom sprites
 }
 
 export interface GenerateGameResponse {

@@ -28,57 +28,94 @@ export function GameCanvas({ game, showControls = true, onGameOver }: GameCanvas
     canvas.width = rect.width
     canvas.height = rect.height
 
+    // Pre-load custom images if any
+    const loadCustomImages = async () => {
+      if (!game.customImages || game.customImages.length === 0) {
+        return {}
+      }
+
+      const imageMap: Record<string, HTMLImageElement> = {}
+      
+      await Promise.all(
+        game.customImages.map(customImg => 
+          new Promise<void>((resolve, reject) => {
+            const img = new Image()
+            img.onload = () => {
+              imageMap[customImg.role] = img
+              console.log(`✅ Loaded custom ${customImg.role} image:`, customImg.filename)
+              resolve()
+            }
+            img.onerror = () => {
+              console.warn(`⚠️ Failed to load custom ${customImg.role} image`)
+              resolve() // Continue anyway
+            }
+            img.src = customImg.dataUrl
+          })
+        )
+      )
+
+      return imageMap
+    }
+
     // Execute game code in sandboxed environment
-    try {
-      // Create a safe context for game execution
-      const gameContext = {
-        canvas,
-        config: game.config,
-        assets: game.assets,
-        onGameOver: (won: boolean, score: number) => {
-          if (onGameOver) onGameOver(won, score)
-        },
-      }
+    const initGame = async () => {
+      try {
+        const customImageMap = await loadCustomImages()
 
-      console.log('🎮 Executing game code...', game.category)
-      console.log('📝 Code preview (first 200 chars):', game.code.substring(0, 200))
+        // Create a safe context for game execution
+        const gameContext = {
+          canvas,
+          config: game.config,
+          assets: game.assets,
+          customImages: customImageMap, // Provide loaded images
+          onGameOver: (won: boolean, score: number) => {
+            if (onGameOver) onGameOver(won, score)
+          },
+        }
 
-      // Execute the generated game code
-      // NOTE: In production, this should be further sandboxed with Web Workers
-      const gameFunction = new Function('context', game.code)
-      const gameFactoryOrInstance = gameFunction(gameContext)
-      
-      console.log('🔧 Factory result type:', typeof gameFactoryOrInstance)
-      
-      // If it's a factory function (as in our templates), execute it
-      const gameInstance = typeof gameFactoryOrInstance === 'function'
-        ? gameFactoryOrInstance(gameContext)
-        : gameFactoryOrInstance
-      
-      console.log('✅ Game instance created:', gameInstance ? 'success' : 'failed')
-      
-      gameInstanceRef.current = gameInstance
+        console.log('🎮 Executing game code...', game.category)
+        console.log('📝 Code preview (first 200 chars):', game.code.substring(0, 200))
 
-      // Start the game if it has a start method
-      if (gameInstance?.start) {
-        console.log('▶️ Starting game...')
-        gameInstance.start()
-      } else {
-        console.warn('⚠️ Game instance has no start method')
-      }
-    } catch (error) {
-      console.error('❌ Error executing game code:', error)
-      // Show error message on canvas
-      const ctx = canvas.getContext('2d')
-      if (ctx) {
-        ctx.fillStyle = '#FF6B9D'
-        ctx.fillRect(0, 0, canvas.width, canvas.height)
-        ctx.fillStyle = 'white'
-        ctx.font = 'bold 24px Arial'
-        ctx.textAlign = 'center'
-        ctx.fillText('Oops! Errore nel caricamento del gioco 😢', canvas.width / 2, canvas.height / 2)
+        // Execute the generated game code
+        // NOTE: In production, this should be further sandboxed with Web Workers
+        const gameFunction = new Function('context', game.code)
+        const gameFactoryOrInstance = gameFunction(gameContext)
+        
+        console.log('🔧 Factory result type:', typeof gameFactoryOrInstance)
+        
+        // If it's a factory function (as in our templates), execute it
+        const gameInstance = typeof gameFactoryOrInstance === 'function'
+          ? gameFactoryOrInstance(gameContext)
+          : gameFactoryOrInstance
+        
+        console.log('✅ Game instance created:', gameInstance ? 'success' : 'failed')
+        
+        gameInstanceRef.current = gameInstance
+
+        // Start the game if it has a start method
+        if (gameInstance?.start) {
+          console.log('▶️ Starting game...')
+          gameInstance.start()
+        } else {
+          console.warn('⚠️ Game instance has no start method')
+        }
+      } catch (error) {
+        console.error('❌ Error executing game code:', error)
+        // Show error message on canvas
+        const ctx = canvas.getContext('2d')
+        if (ctx) {
+          ctx.fillStyle = '#FF6B9D'
+          ctx.fillRect(0, 0, canvas.width, canvas.height)
+          ctx.fillStyle = 'white'
+          ctx.font = 'bold 24px Arial'
+          ctx.textAlign = 'center'
+          ctx.fillText('Oops! Errore nel caricamento del gioco 😢', canvas.width / 2, canvas.height / 2)
+        }
       }
     }
+
+    // Start game initialization
+    initGame()
 
     // Cleanup
     return () => {

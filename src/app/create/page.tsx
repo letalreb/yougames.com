@@ -7,17 +7,19 @@ import { CategoryCard } from '@/components/CategoryCard'
 import { PromptBox } from '@/components/PromptBox'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
 import { GameCanvas } from '@/components/GameCanvas'
+import { ImageUpload } from '@/components/ImageUpload'
 import { getAllCategories } from '@/lib/templates'
-import type { Game, GameCategory, Difficulty } from '@/types/game'
+import type { Game, GameCategory, Difficulty, CustomImage } from '@/types/game'
 import Link from 'next/link'
 
-type Step = 'category' | 'prompt' | 'difficulty' | 'generating' | 'preview'
+type Step = 'category' | 'prompt' | 'difficulty' | 'customize' | 'generating' | 'preview'
 
 export default function CreatePage() {
   const [step, setStep] = useState<Step>('category')
   const [selectedCategory, setSelectedCategory] = useState<GameCategory | null>(null)
   const [prompt, setPrompt] = useState('')
   const [difficulty, setDifficulty] = useState<Difficulty>('easy')
+  const [customImages, setCustomImages] = useState<CustomImage[]>([])
   const [generatedGame, setGeneratedGame] = useState<Game | null>(null)
   const [error, setError] = useState<string | null>(null)
 
@@ -43,6 +45,7 @@ export default function CreatePage() {
           prompt,
           category: selectedCategory,
           difficulty,
+          customImages: customImages.length > 0 ? customImages : undefined,
         }),
       })
 
@@ -83,8 +86,23 @@ export default function CreatePage() {
     setSelectedCategory(null)
     setPrompt('')
     setDifficulty('easy')
+    setCustomImages([])
     setGeneratedGame(null)
     setError(null)
+  }
+
+  // Handle custom image upload
+  const handleImageUpload = (image: CustomImage) => {
+    setCustomImages(prev => {
+      // Replace existing image with same role
+      const filtered = prev.filter(img => img.role !== image.role)
+      return [...filtered, image]
+    })
+  }
+
+  // Remove custom image
+  const removeImage = (imageId: string) => {
+    setCustomImages(prev => prev.filter(img => img.id !== imageId))
   }
 
   return (
@@ -104,7 +122,7 @@ export default function CreatePage() {
         {/* Progress Steps */}
         {step !== 'preview' && (
           <div className="flex justify-center gap-4 mb-8">
-            {['category', 'prompt', 'difficulty', 'generating'].map((s, i) => (
+            {['category', 'prompt', 'difficulty', 'customize', 'generating'].map((s, i) => (
               <div
                 key={s}
                 className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl ${
@@ -289,8 +307,90 @@ export default function CreatePage() {
                   Indietro
                 </BigButton>
                 <BigButton
-                  emoji="✨"
+                  emoji="🎨"
                   color="purple"
+                  onClick={() => setStep('customize')}
+                >
+                  Personalizza (Opzionale)
+                </BigButton>
+              </div>
+            </motion.div>
+          )}
+
+          {/* STEP 4: Customize (Images Upload - Optional) */}
+          {step === 'customize' && (
+            <motion.div
+              key="customize"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="space-y-8"
+            >
+              <div className="text-center">
+                <h2 className="text-4xl font-black text-white mb-4">
+                  🎨 Personalizza il Tuo Gioco!
+                </h2>
+                <p className="text-xl text-white/90 mb-2">
+                  Carica immagini personalizzate (opzionale)
+                </p>
+                <p className="text-lg text-white/70">
+                  Se non carichi immagini, useremo emoji e grafiche standard 🚀
+                </p>
+              </div>
+
+              <div className="max-w-4xl mx-auto space-y-6">
+                {/* Player Image */}
+                <ImageUpload
+                  role="player"
+                  onImageUpload={handleImageUpload}
+                  currentImage={customImages.find(img => img.role === 'player')}
+                />
+
+                {/* Collectible Image (only for certain categories) */}
+                {['platformer', 'runner', 'maze'].includes(selectedCategory || '') && (
+                  <ImageUpload
+                    role="collectible"
+                    onImageUpload={handleImageUpload}
+                    currentImage={customImages.find(img => img.role === 'collectible')}
+                  />
+                )}
+
+                {/* Obstacle Image (only for runner/maze) */}
+                {['runner', 'maze'].includes(selectedCategory || '') && (
+                  <ImageUpload
+                    role="obstacle"
+                    onImageUpload={handleImageUpload}
+                    currentImage={customImages.find(img => img.role === 'obstacle')}
+                  />
+                )}
+
+                {/* Background Image */}
+                <ImageUpload
+                  role="background"
+                  onImageUpload={handleImageUpload}
+                  currentImage={customImages.find(img => img.role === 'background')}
+                />
+              </div>
+
+              {customImages.length > 0 && (
+                <div className="text-center text-white">
+                  <p className="text-lg font-bold">
+                    ✅ {customImages.length} immagin{customImages.length === 1 ? 'e' : 'i'} personalizzat{customImages.length === 1 ? 'a' : 'e'}!
+                  </p>
+                </div>
+              )}
+
+              <div className="flex justify-center gap-4">
+                <BigButton
+                  emoji="←"
+                  color="warning"
+                  onClick={() => setStep('difficulty')}
+                >
+                  Indietro
+                </BigButton>
+                <BigButton
+                  emoji="✨"
+                  color="success"
                   onClick={handleGenerate}
                 >
                   GENERA GIOCO!
@@ -299,7 +399,7 @@ export default function CreatePage() {
             </motion.div>
           )}
 
-          {/* STEP 4: Generating */}
+          {/* STEP 5: Generating */}
           {step === 'generating' && (
             <motion.div
               key="generating"
@@ -311,7 +411,7 @@ export default function CreatePage() {
             </motion.div>
           )}
 
-          {/* STEP 5: Preview & Play */}
+          {/* STEP 6: Preview & Play */}
           {step === 'preview' && generatedGame && (
             <motion.div
               key="preview"
