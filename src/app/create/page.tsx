@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { BigButton } from '@/components/BigButton'
 import { CategoryCard } from '@/components/CategoryCard'
@@ -9,7 +9,6 @@ import { LoadingSpinner } from '@/components/LoadingSpinner'
 import { GameCanvas } from '@/components/GameCanvas'
 import { ImageUpload } from '@/components/ImageUpload'
 import { getAllCategories } from '@/lib/templates'
-import { generateRandomGameIdea } from '@/lib/randomGameGenerator'
 import type { Game, GameCategory, Difficulty, CustomImage } from '@/types/game'
 import Link from 'next/link'
 
@@ -25,18 +24,6 @@ export default function CreatePage() {
   const [error, setError] = useState<string | null>(null)
 
   const categories = getAllCategories()
-
-  // Check for surprise parameter in URL
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search)
-    if (params.get('surprise') === 'true') {
-      // Small delay for better UX
-      setTimeout(() => {
-        handleSurpriseMe()
-      }, 500)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   // Handle category selection
   const handleCategorySelect = (category: GameCategory) => {
@@ -104,25 +91,6 @@ export default function CreatePage() {
     setError(null)
   }
 
-  // Handle "Surprise Me!" - Generate random game idea
-  const handleSurpriseMe = () => {
-    const idea = generateRandomGameIdea()
-    
-    // Populate all fields with random idea
-    setSelectedCategory(idea.category)
-    setPrompt(idea.prompt)
-    setDifficulty(idea.difficulty)
-    setCustomImages([])
-    setError(null)
-    
-    // Show a brief preview of what was generated
-    const categoryName = categories.find(c => c.category === idea.category)?.title || idea.category
-    alert(`🎲 Idea Casuale!\n\n🎮 ${categoryName}\n💭 "${idea.prompt}"\n⚡ Difficoltà: ${idea.difficulty === 'easy' ? 'Facile' : idea.difficulty === 'medium' ? 'Medio' : 'Difficile'}\n\nProcediamo?`)
-    
-    // Skip to customize step (or generate directly)
-    setStep('customize')
-  }
-
   // Handle custom image upload
   const handleImageUpload = (image: CustomImage) => {
     setCustomImages(prev => {
@@ -188,58 +156,6 @@ export default function CreatePage() {
                 <p className="text-xl text-white/90">
                   Scegli una categoria che ti piace!
                 </p>
-              </div>
-
-              {/* Surprise Me Button */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.2 }}
-                className="flex justify-center"
-              >
-                <motion.button
-                  onClick={handleSurpriseMe}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="group relative px-12 py-6 bg-gradient-to-r from-kid-purple via-kid-pink to-kid-orange
-                           rounded-3xl shadow-2xl overflow-hidden font-black text-2xl text-white
-                           transition-all duration-300 hover:shadow-kid-hover"
-                >
-                  {/* Animated background */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-kid-yellow via-kid-pink to-kid-purple 
-                                opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  
-                  {/* Content */}
-                  <div className="relative flex items-center gap-3">
-                    <motion.span
-                      animate={{ rotate: [0, 360] }}
-                      transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                      className="text-4xl"
-                    >
-                      🎲
-                    </motion.span>
-                    <span>SORPRENDIMI!</span>
-                    <motion.span
-                      animate={{ rotate: [0, -360] }}
-                      transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                      className="text-4xl"
-                    >
-                      ✨
-                    </motion.span>
-                  </div>
-                  
-                  {/* Subtitle */}
-                  <div className="relative mt-2 text-sm font-semibold opacity-90">
-                    L'AI genera un gioco casuale per te!
-                  </div>
-                </motion.button>
-              </motion.div>
-
-              {/* Divider */}
-              <div className="flex items-center gap-4">
-                <div className="flex-1 h-1 bg-white/20 rounded-full" />
-                <span className="text-white/70 font-bold text-lg">oppure scegli tu</span>
-                <div className="flex-1 h-1 bg-white/20 rounded-full" />
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">

@@ -29,48 +29,16 @@ export default function HomePage() {
         initial={{ y: 50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.3, duration: 0.5 }}
-        className="flex flex-col items-center gap-4"
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
       >
-        <motion.div
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+        <Link
+          href="/create"
+          className="kid-button bg-gradient-to-r from-kid-orange to-kid-red animate-pulse-glow inline-flex items-center gap-4"
         >
-          <Link
-            href="/create"
-            className="kid-button bg-gradient-to-r from-kid-orange to-kid-red animate-pulse-glow inline-flex items-center gap-4"
-          >
-            <span className="text-5xl">🎨</span>
-            <span>INIZIA A CREARE!</span>
-          </Link>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6 }}
-          className="text-white/70 font-bold"
-        >
-          o
-        </motion.div>
-
-        <motion.div
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7 }}
-        >
-          <Link
-            href="/create?surprise=true"
-            className="px-8 py-4 bg-gradient-to-r from-kid-purple via-kid-pink to-kid-orange
-                     rounded-2xl shadow-xl font-black text-xl text-white
-                     inline-flex items-center gap-3 hover:shadow-2xl transition-all"
-          >
-            <span className="text-3xl">🎲</span>
-            <span>SORPRENDIMI!</span>
-            <span className="text-3xl">✨</span>
-          </Link>
-        </motion.div>
+          <span className="text-5xl">🎨</span>
+          <span>INIZIA A CREARE!</span>
+        </Link>
       </motion.div>
 
       {/* Feature Cards */}
