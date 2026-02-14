@@ -1,0 +1,195 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================
+   GLOBAL STYLES FOR CHILD-FRIENDLY UI
+   ============================================ */
+
+:root {
+  --kid-purple: #9B59B6;
+  --kid-blue: #3498DB;
+  --kid-green: #2ECC71;
+  --kid-yellow: #F1C40F;
+  --kid-orange: #E67E22;
+  --kid-red: #E74C3C;
+  --kid-pink: #FF6B9D;
+  --kid-sky: #87CEEB;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  font-family: 'Arial Rounded MT Bold', 'Comic Sans MS', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+body {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+}
+
+/* ============================================
+   CHILD-FRIENDLY COMPONENTS
+   ============================================ */
+
+.kid-button {
+  @apply px-8 py-4 rounded-2xl text-white font-bold text-xl;
+  @apply transition-all duration-200;
+  @apply shadow-kid hover:shadow-kid-hover;
+  @apply active:translate-y-1;
+  cursor: pointer;
+  border: none;
+  min-height: 80px;
+  min-width: 200px;
+  font-size: 24px;
+}
+
+.kid-button:hover {
+  transform: translateY(-2px) scale(1.05);
+}
+
+.kid-button:active {
+  transform: translateY(2px) scale(0.98);
+}
+
+.kid-card {
+  @apply bg-white rounded-3xl p-6 shadow-2xl;
+  @apply transition-all duration-300;
+}
+
+.kid-card:hover {
+  @apply shadow-kid;
+  transform: translateY(-4px);
+}
+
+.kid-input {
+  @apply w-full px-6 py-4 rounded-2xl border-4;
+  @apply text-xl font-semibold;
+  @apply focus:outline-none focus:ring-4;
+  min-height: 60px;
+  font-size: 20px;
+}
+
+.kid-heading {
+  @apply text-4xl md:text-6xl font-black;
+  @apply bg-gradient-to-r from-kid-pink to-kid-purple bg-clip-text text-transparent;
+  line-height: 1.2;
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes wiggle {
+  0%, 100% {
+    transform: rotate(-3deg);
+  }
+  50% {
+    transform: rotate(3deg);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(155, 89, 182, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(155, 89, 182, 0.8);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-wiggle {
+  animation: wiggle 1s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* ============================================
+   GAME CANVAS CONTAINER
+   ============================================ */
+
+.game-canvas-container {
+  @apply relative w-full;
+  @apply bg-black rounded-3xl overflow-hidden;
+  @apply shadow-2xl;
+  max-width: 100%;
+  aspect-ratio: 16 / 9;
+}
+
+.game-canvas-container canvas {
+  @apply w-full h-full;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+/* ============================================
+   RESPONSIVE UTILITIES
+   ============================================ */
+
+@media (max-width: 768px) {
+  .kid-button {
+    min-width: 150px;
+    min-height: 60px;
+    font-size: 18px;
+  }
+
+  .kid-heading {
+    @apply text-3xl;
+  }
+}
+
+/* ============================================
+   LOADING STATES
+   ============================================ */
+
+.loading-spinner {
+  @apply inline-block w-16 h-16 border-8 border-white border-t-transparent rounded-full;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ============================================
+   CONFETTI EFFECT (for celebrations)
+   ============================================ */
+
+.confetti {
+  position: fixed;
+  width: 10px;
+  height: 10px;
+  background: var(--kid-yellow);
+  animation: confetti-fall 3s linear forwards;
+}
+
+@keyframes confetti-fall {
+  to {
+    transform: translateY(100vh) rotate(360deg);
+    opacity: 0;
+  }
+}
