@@ -26,9 +26,21 @@ function parsePrompt(prompt: string): ParsedPrompt {
   const parsed: ParsedPrompt = {
     objects: [],
   }
+  
+  console.log('🔍 Parsing prompt:', prompt)
 
-  // Extract character (common animals and objects)
-  const characters = ['gatto', 'cat', 'cane', 'dog', 'dinosauro', 'dinosaur', 'robot', 'alieno', 'alien', 'rana', 'frog', 'uccello', 'bird', 'pesce', 'fish', 'coniglio', 'rabbit']
+  // Extract character (massively expanded list)
+  const characters = [
+    'gatto', 'cat', 'cane', 'dog', 'dinosauro', 'dinosaur', 'dino', 'robot', 'alieno', 'alien', 
+    'rana', 'frog', 'uccello', 'bird', 'pesce', 'fish', 'coniglio', 'rabbit', 'bunny', 'volpe', 'fox',
+    'orso', 'bear', 'leone', 'lion', 'tigre', 'tiger', 'panda', 'elefante', 'elephant',
+    'scimmia', 'monkey', 'gorilla', 'koala', 'unicorno', 'unicorn', 'drago', 'dragon',
+    'cavaliere', 'knight', 'mago', 'wizard', 'ninja', 'pirata', 'pirate', 'astronauta', 'astronaut',
+    'auto', 'car', 'razzo', 'rocket', 'nave', 'ship', 'aereo', 'plane',
+    'principessa', 'princess', 'principe', 'prince', 'eroe', 'hero', 'guerriero', 'warrior',
+    'tartaruga', 'turtle', 'serpente', 'snake', 'coccodrillo', 'crocodile', 'pinguino', 'penguin',
+    'mucca', 'cow', 'cavallo', 'horse', 'pecora', 'sheep', 'maiale', 'pig', 'pollo', 'chicken'
+  ]
   for (const char of characters) {
     if (lower.includes(char)) {
       parsed.character = char
@@ -37,7 +49,7 @@ function parsePrompt(prompt: string): ParsedPrompt {
   }
 
   // Extract action
-  const actions = ['salta', 'jump', 'corre', 'run', 'vola', 'fly', 'nuota', 'swim', 'raccoglie', 'collect']
+  const actions = ['salta', 'jump', 'corre', 'run', 'vola', 'fly', 'nuota', 'swim', 'raccoglie', 'collect', 'evita', 'avoid', 'schiva', 'dodge', 'spara', 'shoot']
   for (const action of actions) {
     if (lower.includes(action)) {
       parsed.action = action
@@ -46,7 +58,13 @@ function parsePrompt(prompt: string): ParsedPrompt {
   }
 
   // Extract setting
-  const settings = ['nuvole', 'cloud', 'spazio', 'space', 'mare', 'ocean', 'foresta', 'forest', 'cielo', 'sky', 'città', 'city']
+  const settings = [
+    'nuvole', 'cloud', 'spazio', 'space', 'mare', 'ocean', 'foresta', 'forest', 'cielo', 'sky', 
+    'città', 'city', 'giungla', 'jungle', 'deserto', 'desert', 'montagna', 'mountain',
+    'castello', 'castle', 'dungeon', 'grotta', 'cave', 'vulcano', 'volcano',
+    'pianeta', 'planet', 'luna', 'moon', 'stelle', 'stars', 'galassia', 'galaxy',
+    'spiaggia', 'beach', 'isola', 'island', 'neve', 'snow', 'ghiaccio', 'ice'
+  ]
   for (const setting of settings) {
     if (lower.includes(setting)) {
       parsed.setting = setting
@@ -54,71 +72,134 @@ function parsePrompt(prompt: string): ParsedPrompt {
     }
   }
 
-  // Extract collectible objects
-  const objects = ['stelle', 'star', 'monete', 'coin', 'gemme', 'gem', 'frutti', 'fruit', 'fiori', 'flower']
+  // Extract collectible objects (expanded)
+  const objects = [
+    'stelle', 'star', 'monete', 'coin', 'gemme', 'gem', 'frutti', 'fruit', 'fiori', 'flower',
+    'diamanti', 'diamond', 'oro', 'gold', 'cristalli', 'crystal', 'chiavi', 'key',
+    'cuori', 'heart', 'pozioni', 'potion', 'tesoro', 'treasure', 'bandiera', 'flag',
+    'anelli', 'ring', 'corone', 'crown', 'spade', 'sword', 'scudi', 'shield',
+    'batterie', 'battery', 'energia', 'energy', 'carburante', 'fuel'
+  ]
   for (const obj of objects) {
     if (lower.includes(obj)) {
       parsed.objects?.push(obj)
     }
   }
+  
+  console.log('✅ Parsed result:', parsed)
 
   return parsed
 }
 
 /**
- * Map parsed elements to sprites (emoji)
+ * Map parsed elements to sprites (emoji) - EXPANDED
  */
 function mapToSprites(parsed: ParsedPrompt): { player: string; collectible: string } {
   const characterMap: Record<string, string> = {
-    'gatto': '🐱',
-    'cat': '🐱',
-    'cane': '🐶',
-    'dog': '🐶',
-    'dinosauro': '🦖',
-    'dinosaur': '🦖',
+    // Original animals
+    'gatto': '🐱', 'cat': '🐱',
+    'cane': '🐶', 'dog': '🐶',
+    'dinosauro': '🦖', 'dinosaur': '🦖', 'dino': '🦖',
     'robot': '🤖',
-    'alieno': '👽',
-    'alien': '👽',
-    'rana': '🐸',
-    'frog': '🐸',
-    'uccello': '🐦',
-    'bird': '🐦',
-    'pesce': '🐟',
-    'fish': '🐟',
-    'coniglio': '🐰',
-    'rabbit': '🐰',
+    'alieno': '👽', 'alien': '👽',
+    'rana': '🐸', 'frog': '🐸',
+    'uccello': '🐦', 'bird': '🐦',
+    'pesce': '🐟', 'fish': '🐟',
+    'coniglio': '🐰', 'rabbit': '🐰', 'bunny': '🐰',
+    // Expanded animals
+    'volpe': '🦊', 'fox': '🦊',
+    'orso': '🐻', 'bear': '🐻',
+    'leone': '🦁', 'lion': '🦁',
+    'tigre': '🐯', 'tiger': '🐯',
+    'panda': '🐼',
+    'elefante': '🐘', 'elephant': '🐘',
+    'scimmia': '🐵', 'monkey': '🐵',
+    'gorilla': '🦍',
+    'koala': '🐨',
+    'unicorno': '🦄', 'unicorn': '🦄',
+    'drago': '🐉', 'dragon': '🐉',
+    // Characters
+    'cavaliere': '🤺', 'knight': '🤺',
+    'mago': '🧙', 'wizard': '🧙',
+    'ninja': '🥷',
+    'pirata': '🏴‍☠️', 'pirate': '🏴‍☠️',
+    'astronauta': '🧑‍🚀', 'astronaut': '🧑‍🚀',
+    'principessa': '👸', 'princess': '👸',
+    'principe': '🤴', 'prince': '🤴',
+    'eroe': '🦸', 'hero': '🦸',
+    'guerriero': '⚔️', 'warrior': '⚔️',
+    // Vehicles
+    'auto': '🚗', 'car': '🚗',
+    'razzo': '🚀', 'rocket': '🚀',
+    'nave': '🚢', 'ship': '🚢',
+    'aereo': '✈️', 'plane': '✈️',
+    // More animals
+    'tartaruga': '🐢', 'turtle': '🐢',
+    'serpente': '🐍', 'snake': '🐍',
+    'coccodrillo': '🐊', 'crocodile': '🐊',
+    'pinguino': '🐧', 'penguin': '🐧',
+    'mucca': '🐮', 'cow': '🐮',
+    'cavallo': '🐴', 'horse': '🐴',
+    'pecora': '🐑', 'sheep': '🐑',
+    'maiale': '🐷', 'pig': '🐷',
+    'pollo': '🐔', 'chicken': '🐔'
   }
 
   const objectMap: Record<string, string> = {
-    'stelle': '⭐',
-    'star': '⭐',
-    'monete': '🪙',
-    'coin': '🪙',
-    'gemme': '💎',
-    'gem': '💎',
-    'frutti': '🍎',
-    'fruit': '🍎',
-    'fiori': '🌸',
-    'flower': '🌸',
+    // Original
+    'stelle': '⭐', 'star': '⭐',
+    'monete': '🪙', 'coin': '🪙',
+    'gemme': '💎', 'gem': '💎',
+    'frutti': '🍎', 'fruit': '🍎',
+    'fiori': '🌸', 'flower': '🌸',
+    // Expanded
+    'diamanti': '💎', 'diamond': '💎',
+    'oro': '🏆', 'gold': '🏆',
+    'cristalli': '🔮', 'crystal': '🔮',
+    'chiavi': '🔑', 'key': '🔑',
+    'cuori': '❤️', 'heart': '❤️',
+    'pozioni': '🧪', 'potion': '🧪',
+    'tesoro': '💰', 'treasure': '💰',
+    'bandiera': '🚩', 'flag': '🚩',
+    'anelli': '💍', 'ring': '💍',
+    'corone': '👑', 'crown': '👑',
+    'spade': '⚔️', 'sword': '⚔️',
+    'scudi': '🛡️', 'shield': '🛡️',
+    'batterie': '🔋', 'battery': '🔋',
+    'energia': '⚡', 'energy': '⚡',
+    'carburante': '⛽', 'fuel': '⛽'
   }
 
   const settingColors: Record<string, string> = {
-    'nuvole': '#87CEEB',
-    'cloud': '#87CEEB',
-    'spazio': '#1a1a2e',
-    'space': '#1a1a2e',
-    'mare': '#006994',
-    'ocean': '#006994',
-    'foresta': '#2d5016',
-    'forest': '#2d5016',
-    'cielo': '#87CEEB',
-    'sky': '#87CEEB',
+    'nuvole': '#87CEEB', 'cloud': '#87CEEB',
+    'spazio': '#1a1a2e', 'space': '#1a1a2e',
+    'mare': '#006994', 'ocean': '#006994',
+    'foresta': '#2d5016', 'forest': '#2d5016',
+    'cielo': '#87CEEB', 'sky': '#87CEEB',
+    'città': '#808080', 'city': '#808080',
+    'giungla': '#228B22', 'jungle': '#228B22',
+    'deserto': '#EDC9AF', 'desert': '#EDC9AF',
+    'montagna': '#8B7355', 'mountain': '#8B7355',
+    'castello': '#B8860B', 'castle': '#B8860B',
+    'grotta': '#36454F', 'cave': '#36454F', 'dungeon': '#36454F',
+    'vulcano': '#DC143C', 'volcano': '#DC143C',
+    'pianeta': '#1a1a2e', 'planet': '#1a1a2e',
+    'luna': '#F5F5DC', 'moon': '#F5F5DC',
+    'galassia': '#191970', 'galaxy': '#191970',
+    'spiaggia': '#F4A460', 'beach': '#F4A460',
+    'isola': '#20B2AA', 'island': '#20B2AA',
+    'neve': '#FFFAFA', 'snow': '#FFFAFA',
+    'ghiaccio': '#E0FFFF', 'ice': '#E0FFFF'
   }
 
-  return {
+  const result = {
     player: characterMap[parsed.character || ''] || '🐱',
     collectible: parsed.objects && parsed.objects[0] ? (objectMap[parsed.objects[0]] || '⭐') : '⭐',
   }
+  
+  console.log('🎮 Mapped sprites:', result)
+  
+  return result
 }
 
 /**

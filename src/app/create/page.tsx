@@ -213,9 +213,9 @@ export default function CreatePage() {
                 <PromptBox
                   value={prompt}
                   onChange={setPrompt}
-                  placeholder="Esempio: un gatto che salta tra le nuvole e raccoglie stelle dorate!"
-                  maxLength={200}
-                  helpText={`Suggerimento: descrivi il personaggio, cosa fa, e dove si trova!`}
+                  placeholder="Descrivi il tuo gioco in dettaglio: personaggi, meccaniche, obiettivi, stile grafico... Più dettagli dai, più accurato sarà il gioco generato!"
+                  maxLength={2000}
+                  helpText={`Suggerimento: sii specifico su cosa vuoi che il giocatore faccia, come dovrebbe apparire il gioco, e quali regole dovrebbe seguire!`}
                 />
               </div>
 
@@ -243,7 +243,7 @@ export default function CreatePage() {
                   emoji="➡️"
                   color="success"
                   onClick={() => setStep('difficulty')}
-                  disabled={prompt.length < 10}
+                  disabled={prompt.length < 50}
                 >
                   Avanti
                 </BigButton>
@@ -298,7 +298,7 @@ export default function CreatePage() {
                 ))}
               </div>
 
-              <div className="flex justify-center gap-4">
+              <div className="flex justify-center gap-4 flex-wrap">
                 <BigButton
                   emoji="←"
                   color="warning"
@@ -312,6 +312,13 @@ export default function CreatePage() {
                   onClick={() => setStep('customize')}
                 >
                   Personalizza (Opzionale)
+                </BigButton>
+                <BigButton
+                  emoji="✨"
+                  color="success"
+                  onClick={handleGenerate}
+                >
+                  Genera Gioco!
                 </BigButton>
               </div>
             </motion.div>

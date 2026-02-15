@@ -129,20 +129,24 @@ export interface Game {
   category: GameCategory;
   difficulty: Difficulty;
   
-  config: GameConfig;
+  config: Partial<GameConfig> | { width: number; height: number; backgroundColor: string; isAIGenerated?: boolean };
   
-  // Generated code as string (to be executed in sandboxed canvas)
+  // Generated code as string (to be executed in sandboxed canvas or iframe)
+  // Can be JavaScript code OR complete HTML for AI-generated games
   code: string;
   
-  assets: AssetManifest;
+  assets: Partial<AssetManifest> | { playerSprite?: string; collectibleSprite?: string; obstacleSprite?: string };
   
   // Custom uploaded images
   customImages?: CustomImage[];
   
+  // AI-Generated flag
+  aiGenerated?: boolean;
+  
   // Metadata
   createdAt: string; // ISO date
-  createdBy: string; // userId or "guest"
-  published: boolean;
+  createdBy?: string; // userId or "guest"
+  published?: boolean;
   publicUrl?: string;
   
   // Stats (optional)
